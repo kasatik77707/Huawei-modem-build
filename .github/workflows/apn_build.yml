@@ -25,7 +25,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
+          python -m PyInstaller --clean --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
 
       - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
@@ -52,7 +52,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
+          python -m PyInstaller --clean --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
 
       - name: Upload MacOS App
         uses: actions/upload-artifact@v4
