@@ -29,5 +29,5 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Strizh_MacOS_App
-        path: dist/Strizh_Manager
+        name: APN_Manager_MacOS
+        path: dist/APN_Manager.app
