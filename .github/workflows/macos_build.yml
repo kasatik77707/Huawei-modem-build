@@ -24,7 +24,7 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
-        python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "Strizh_Manager" apn_dodi.py
+        python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
