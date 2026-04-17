@@ -1,33 +1,61 @@
-name: Build MacOS App
+name: Build Apps (Win & Mac)
 
-on: 
+on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: macos-latest
-
+  # Сборка для Windows
+  build-windows:
+    runs-on: windows-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install customtkinter huawei-lte-api pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install customtkinter huawei-lte-api pyinstaller
 
-    - name: Build with PyInstaller
-      run: |
-        python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
+      - name: Build with PyInstaller
+        run: |
+          python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: APN_Manager_MacOS
-        path: dist/APN_Manager.app
+      - name: Upload Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: APN_Manager_Windows
+          path: dist/APN_Manager.exe
+
+  # Сборка для macOS
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install customtkinter huawei-lte-api pyinstaller
+
+      - name: Build with PyInstaller
+        run: |
+          python -m PyInstaller --noconsole --onefile --collect-all customtkinter --name "APN_Manager" apn_change.py
+
+      - name: Upload MacOS App
+        uses: actions/upload-artifact@v4
+        with:
+          name: APN_Manager_MacOS
+          path: dist/APN_Manager.app
