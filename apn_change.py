@@ -55,12 +55,24 @@ class StrizhModemApp(ctk.CTk):
                                          text_color="#00BFFF", hover_color="#eef8ff",
                                          command=self.refresh_all)
         self.btn_refresh.pack(pady=5, padx=30, fill="x")
-
+        
         self.btn_activate = ctk.CTkButton(self.main_card, text="ПОДКЛЮЧИТЬ APN", 
                                           fg_color="#e30613", hover_color="#b3050f", 
                                           height=55, corner_radius=28, font=("Segoe UI", 16, "bold"),
                                           command=self.activate_selected)
         self.btn_activate.pack(pady=15, padx=30, fill="x")
+
+        self.btn_quick_sputnik = ctk.CTkButton(
+            self.main_card, # или self.main_frame, в зависимости от версии кода
+            text="🚀 НАСТРОИТЬ СПУТНИКОВУЮ СВЯЗЬ", 
+            fg_color="#0099da", 
+            hover_color="#007bbd",
+            height=45, 
+            corner_radius=22, 
+            font=("Segoe UI", 13, "bold"),
+            command=self.quick_add_sputnik
+        )
+        self.btn_quick_sputnik.pack(pady=10, padx=30, fill="x")
 
         # --- СКРЫТАЯ СЕКЦИЯ ---
         self.expand_btn = ctk.CTkButton(self.main_card, text="➕ Добавить новый (Пароль)", 
@@ -99,6 +111,47 @@ class StrizhModemApp(ctk.CTk):
         timestamp = time.strftime("%H:%M:%S")
         self.log_box.insert("end", f"[{timestamp}] {msg}\n")
         self.log_box.see("end")
+
+    def quick_add_sputnik(self):
+        """Быстрое добавление конкретного APN"""
+        name = "Sputnikovaya Svyaz Internet"
+        apn = "dodi.t2.ru"
+        
+        self.log(f"Запуск быстрой настройки: {name}...")
+        
+        def task():
+            try:
+                with Connection(self.modem_url) as conn:
+                    dialup = DialUp(conn)
+                    
+                    # Получаем текущие профили, чтобы вычислить новый ID
+                    profs = dialup.profiles().get('Profiles', {}).get('Profile', [])
+                    if isinstance(profs, dict): profs = [profs]
+                    idx_list = [int(p['Index']) for p in profs]
+                    new_idx = max(idx_list) + 1 if idx_list else 1
+
+                    # Создаем профиль
+                    dialup.create_profile(
+                        name=name, 
+                        apn=apn, 
+                        dialup_number='*99#', 
+                        username='', 
+                        password=''
+                    )
+                    
+                    self.log(f"Профиль '{name}' создан (ID {new_idx})")
+                    
+                    # Сразу активируем его
+                    dialup.set_default_profile(new_idx)
+                    self.log(f"Переключение на новый профиль...")
+                    
+                    time.sleep(10)
+                    self.run_ping()
+                    self.refresh_all()
+            except Exception as e:
+                self.log(f"Ошибка быстрого добавления: {e}")
+
+        threading.Thread(target=task, daemon=True).start()
 
     def run_ping(self, silent=False):
         if not silent: self.log(f"Проверка связи ({self.ping_host})...")
