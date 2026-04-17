@@ -64,7 +64,7 @@ class StrizhModemApp(ctk.CTk):
 
         self.btn_quick_sputnik = ctk.CTkButton(
             self.main_card, # или self.main_frame, в зависимости от версии кода
-            text="🚀 НАСТРОИТЬ СПУТНИКОВУЮ СВЯЗЬ", 
+            text="🚀 Добавить APN Спутриковая связь", 
             fg_color="#0099da", 
             hover_color="#007bbd",
             height=45, 
